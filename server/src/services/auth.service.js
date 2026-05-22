@@ -6,17 +6,20 @@ const STATUS_CODE = require("../utils/statusCode");
 
 const createUser = async (data) => {
     try {
-        const { email, password, name } = data;
-        const normalizedEmail = email.toLowerCase().trim();
-        const userExist = await User.findOne({ email: normalizedEmail });
+        const email = String(data.email).toLowerCase().trim();
+        const password = String(data.password);
+        const name = String(data.name);
+
+        const userExist = await User.findOne({ email });
         if (userExist) {
             throw new AppError("User Already Exists", STATUS_CODE.BAD_REQUEST);
         }
         const user = await User.create({
-            email: normalizedEmail,
+            email,
             name,
             password
         });
+
         return user;
     } catch (error) {
         if (error instanceof AppError) {
@@ -28,66 +31,47 @@ const createUser = async (data) => {
 
 const loginUser = async (data) => {
     try {
-        const { email, password } = data;
-        const normalizedEmail = email.toLowerCase().trim();
 
-        const user = await User.findOne({ email: normalizedEmail });
-        if (user && (user.comparePassword(password))) {
-            return {
-                user,
-                accessToken: generateAccessToken(user._id, user.tokenVersion),
-                refreshToken: generateRefreshToken(user._id, user.tokenVersion)
-            };
-        }
-        else {
+        const email = String(data.email).toLowerCase().trim();
+        const password = String(data.password);
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
             throw new AppError("Invalid Credentials", STATUS_CODE.UNAUTHORIZED);
         }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            throw new AppError("Invalid Credentials", STATUS_CODE.UNAUTHORIZED);
+        }
+
+        return {
+            user,
+            accessToken: generateAccessToken(
+                user._id,
+                user.tokenVersion
+            ),
+            refreshToken: generateRefreshToken(
+                user._id,
+                user.tokenVersion
+            )
+        };
+
     } catch (error) {
         if (error instanceof AppError) {
             throw error;
         }
         throw new AppError("Error login user", STATUS_CODE.INTERNAL_SERVER_ERROR);
     }
-}
-
-const refreshHandler = async (data) => {
-    try {
-        const { token } = data;
-
-        if (!token) {
-            throw new AppError("Refresh Token Missing", STATUS_CODE.UNAUTHORIZED);
-        }
-
-        const payload = await verifyRefreshToken(token);
-
-        const user = await User.findById(payload.userId);
-
-        if (!user) {
-            throw new AppError("User not found", STATUS_CODE.UNAUTHORIZED);
-        }
-
-        if (user.tokenVersion != payload.tokenVersion) {
-            throw new AppError("Refresh token invalidated", STATUS_CODE.UNAUTHORIZED);
-        }
-
-        const newAccessToken = generateAccessToken(user._id, user.tokenVersion);
-        const newRefreshToken = generateRefreshToken(user._id, user.tokenVersion);
-
-        return {
-            newAccessToken,
-            newRefreshToken,
-            user
-        };
-    } catch (error) {
-        if (error instanceof AppError) {
-            throw error;
-        }
-        throw new AppError("Error refreshing token", STATUS_CODE.INTERNAL_SERVER_ERROR);
-    }
-}
+};
 
 const findUser = async (id) => {
     try {
+        if (!id) {
+            throw new AppError("Invalid user id", STATUS_CODE.UNAUTHORIZED);
+        }
         const user = await User.findById(id);
 
         if (!user) {
@@ -96,11 +80,14 @@ const findUser = async (id) => {
 
         return user;
     } catch (error) {
+        if (error.name === "CastError") {
+            throw new AppError("Invalid user id", STATUS_CODE.UNAUTHORIZED);
+        }
         if (error instanceof AppError) {
             throw error;
         }
         throw new AppError("Error finding user", STATUS_CODE.INTERNAL_SERVER_ERROR);
-    }    
+    }
 }
 
 //forgot-password service

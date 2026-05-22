@@ -16,32 +16,24 @@ const login = async (req, res, next) => {
     try {
         const { user, accessToken, refreshToken } = await authService.loginUser(req.body);
 
-        res.cookie("refreshToken", refreshToken, {
+        const accessCookieOptions = {
             httpOnly: true,
             secure: config.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+            sameSite: "lax", 
+            maxAge: 30 * 60 * 1000
+        };
 
-        successResponse(res, { user, accessToken }, "Logged in successfully", STATUS_CODE.OK);
-    } catch (error) {
-        next(error);
-    }
-}
-
-const refreshController = async (req, res, next) => {
-    try {
-        const token = req.cookies?.refreshToken;
-        const { newAccessToken, newRefreshToken, user } = await authService.refreshHandler({ token });
-
-        res.cookie("refreshToken", newRefreshToken, {
+        const refreshCookieOptions = {
             httpOnly: true,
             secure: config.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "lax", 
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        };
 
-        successResponse(res, { user, "accessToken": newAccessToken }, "Token refreshed", STATUS_CODE.OK);
+        res.cookie("accessToken", accessToken, accessCookieOptions);
+        res.cookie("refreshToken", refreshToken, refreshCookieOptions);
+
+        successResponse(res, user, "Logged in successfully", STATUS_CODE.OK);
     } catch (error) {
         next(error);
     }

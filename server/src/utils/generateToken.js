@@ -20,7 +20,7 @@ const generateRefreshToken = (userId, tokenVersion) => {
             userId,
             tokenVersion
         },
-        config.JWT_ACCESS,
+        config.JWT_REFRESH,
         {
             expiresIn: "7d"
         }
@@ -28,10 +28,10 @@ const generateRefreshToken = (userId, tokenVersion) => {
 }
 
 const verifyRefreshToken = (token) => {
-    return jwt.verify(token, config.JWT_ACCESS);
+    return jwt.verify(token, config.JWT_REFRESH);
 }
 
-const verfiyAccessToken = (token) => {
+const verifyAccessToken = (token) => {
     return jwt.verify(token, config.JWT_ACCESS);
 }
 
@@ -39,5 +39,5 @@ module.exports = {
     generateAccessToken,
     generateRefreshToken,
     verifyRefreshToken,
-    verfiyAccessToken
+    verifyAccessToken
 };
