@@ -2,6 +2,7 @@ const express = require("express");
 const authController = require("../controllers/auth.controller");
 const validate = require("../middlewares/validate.middleware");
 const { registerValidation, loginValidation } = require("../utils/validation");
+const authCheck = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
@@ -15,13 +16,14 @@ router.post("/login",
     authController.login
 );
 
-router.post("/refresh", 
-    authController.refreshController
-);
-
 router.post("/logout", 
+    authCheck,
     authController.logout
 );
+
+router.post("/refresh",
+    authController.refreshAccessTokenController
+)
 
 //reset password route
 

@@ -90,6 +90,41 @@ const findUser = async (id) => {
     }
 }
 
+const refreshAccessToken = async (refreshToken) => {
+    try {
+        if (!refreshToken) {
+            throw new AppError("Refresh token missing", STATUS_CODE.UNAUTHORIZED);
+        }
+
+        const decoded = verifyRefreshToken(refreshToken);
+
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+            throw new AppError("User not found", STATUS_CODE.UNAUTHORIZED);
+        }
+
+        if (user.tokenVersion !== decoded.tokenVersion) {
+            throw new AppError("Invalid refresh token", STATUS_CODE.UNAUTHORIZED);
+        }
+
+        const newAccessToken = generateAccessToken(
+            user._id,
+            user.tokenVersion
+        );
+
+        return newAccessToken;
+
+    } catch (error) {
+
+        if (error instanceof AppError) {
+            throw error;
+        }
+
+        throw new AppError("Invalid or expired refresh token", STATUS_CODE.UNAUTHORIZED);
+    }
+};
+
 //forgot-password service
 
 
@@ -98,6 +133,6 @@ const findUser = async (id) => {
 module.exports = {
     createUser,
     loginUser,
-    refreshHandler,
-    findUser
+    findUser,
+    refreshAccessToken
 }

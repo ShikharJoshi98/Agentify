@@ -19,14 +19,14 @@ const login = async (req, res, next) => {
         const accessCookieOptions = {
             httpOnly: true,
             secure: config.NODE_ENV === "production",
-            sameSite: "lax", 
+            sameSite: "lax",
             maxAge: 30 * 60 * 1000
         };
 
         const refreshCookieOptions = {
             httpOnly: true,
             secure: config.NODE_ENV === "production",
-            sameSite: "lax", 
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         };
 
@@ -42,7 +42,28 @@ const login = async (req, res, next) => {
 const logout = async (req, res, next) => {
     try {
         res.clearCookie("refreshToken", { path: "/" });
+        res.clearCookie("accessToken", { path: "/" });
         successResponse(res, {}, "Logged out successfully", STATUS_CODE.OK);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const refreshAccessTokenController = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+
+        const newAccessToken = await authService.refreshAccessToken(refreshToken);
+        const accessCookieOptions = {
+            httpOnly: true,
+            secure: config.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 60 * 1000
+        };
+
+        res.cookie("accessToken", newAccessToken, accessCookieOptions);
+
+        successResponse(res, {}, "Generated new access token", STATUS_CODE.CREATED);
     } catch (error) {
         next(error);
     }
@@ -56,6 +77,6 @@ const logout = async (req, res, next) => {
 module.exports = {
     register,
     login,
-    refreshController,
-    logout
+    logout,
+    refreshAccessTokenController
 }
