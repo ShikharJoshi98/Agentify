@@ -4,9 +4,13 @@ const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/error.middleware");
 const apiRoutes = require("./routes");
 const cookieParser = require("cookie-parser");
+const corsMiddleware = require("./middlewares/cors.middleware");
+const helmet = require("helmet");
 
 const app = express();
 
+app.use(helmet());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

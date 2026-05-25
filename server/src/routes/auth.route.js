@@ -21,6 +21,11 @@ router.post("/logout",
     authController.logout
 );
 
+router.get("/checkAuth",
+    authCheck,
+    authController.authCheck
+)
+
 router.post("/refresh",
     authController.refreshAccessTokenController
 )

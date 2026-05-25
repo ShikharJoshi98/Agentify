@@ -69,6 +69,14 @@ const refreshAccessTokenController = async (req, res, next) => {
     }
 }
 
+const authCheck = async (req, res, next) => {
+    try {
+        successResponse(res, req.user, "User Authenticated", STATUS_CODE.OK);
+    } catch (error) {
+        next(error);
+    }
+}
+
 //forgot-password controller
 
 
@@ -78,5 +86,6 @@ module.exports = {
     register,
     login,
     logout,
+    authCheck,
     refreshAccessTokenController
 }
