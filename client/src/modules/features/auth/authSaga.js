@@ -1,7 +1,7 @@
 import { all, call, put, takeLatest } from "redux-saga/effects";
 import authTypes from "./authActionTypes";
-import { checkAuth, loginUser, registerUser } from "./authApi";
-import { chechAuthFailure, chechAuthSuccess, loginFailure, loginSuccess, signUpFailure, signUpSuccess } from "./authAction";
+import { checkAuth, loginUser, logoutUser, registerUser } from "./authApi";
+import { chechAuthFailure, chechAuthSuccess, loginFailure, loginSuccess, logoutFailure, logoutSuccess, signUpFailure, signUpSuccess } from "./authAction";
 
 function* signUpSaga(action) {
     try {
@@ -29,6 +29,18 @@ function* loginSaga(action) {
     }
 }
 
+function* logoutSaga() {
+    try {
+        const response = yield call(
+            logoutUser
+        );
+
+        yield put(logoutSuccess(response));
+    } catch (error) {
+        yield put(logoutFailure(error.message));
+    }
+}
+
 function* checkAuthSaga() {
     try {
         const response = yield call(
@@ -52,6 +64,11 @@ function* authSaga() {
         takeLatest(
             authTypes.LOGIN_REQUEST,
             loginSaga
+        ),
+
+        takeLatest(
+            authTypes.LOGOUT_REQUEST,
+            logoutSaga
         ),
 
         takeLatest(

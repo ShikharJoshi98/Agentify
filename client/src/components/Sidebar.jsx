@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight, LuLogOut } from "react-icons/lu";
 import { sideNav } from "../constants/dashboard";
 import { IoDiamond } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutRequest } from "../modules/features/auth/authAction";
 
 function Sidebar() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [isSideNav, setSideNav] = useState(true);
 
     return (
@@ -53,6 +58,16 @@ function Sidebar() {
                 }
                 )}
             </ul>
+            <button onClick={() => { dispatch(logoutRequest()); navigate("/") }} className="flex items-center gap-3 p-2 cursor-pointer absolute bottom-10 hover:text-red-600 text-red-500">
+                <span className='text-xl'>
+                    <LuLogOut />
+                </span>
+                <span
+                    className={`font-semibold transition-opacity duration-300 text-sm whitespace-nowrap ${isSideNav ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden pointer-events-none'}`}
+                >
+                    Logout
+                </span>
+            </button>
         </aside>
     )
 }

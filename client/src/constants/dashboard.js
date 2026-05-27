@@ -28,3 +28,13 @@ export const sideNav = [
         path: '/dashboard/account-details'
     }
 ];
+
+export const colors = [
+    "bg-yellow-100",
+    "bg-blue-100",
+    "bg-green-100",
+    "bg-pink-100",
+    "bg-purple-100",
+    "bg-orange-100",
+    "bg-cyan-100"
+]

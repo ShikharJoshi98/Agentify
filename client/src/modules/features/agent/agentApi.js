@@ -7,3 +7,7 @@ export const createAgent = (data) => {
 export const getAgents = () => {
     return get("/agent/getAll");
 }
+
+export const fetchAgent = (id) => {
+    return get(`/agent/get/${id}`);
+}

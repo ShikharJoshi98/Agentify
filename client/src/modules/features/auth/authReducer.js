@@ -12,6 +12,11 @@ const initialState = {
         error: null,
         message: null
     },
+    logout: {
+        loading: false,
+        error: null,
+        message: null
+    },
     checkAuth: {
         loading: false,
         error: null,
@@ -53,7 +58,6 @@ const authReducer = (state = initialState, action) => {
         case authTypes.LOGIN_REQUEST:
             return {
                 ...state,
-                user: null,
                 login: {
                     loading: true,
                     error: null,
@@ -83,6 +87,36 @@ const authReducer = (state = initialState, action) => {
                 },
                 isAuthenticated: false
             };
+        case authTypes.LOGOUT_REQUEST:
+            return {
+                ...state,
+                logout: {
+                    loading: true,
+                    error: null,
+                    message: null
+                }
+            };
+        case authTypes.LOGOUT_SUCCESS:
+            return {
+                ...state,
+                user: null,
+                logout: {
+                    loading: false,
+                    error: null,
+                    message: action.payload.message
+                },
+                isAuthenticated: false
+            };
+        case authTypes.LOGOUT_FAILURE:
+            return {
+                ...state,
+                logout: {
+                    loading: false,
+                    error: action.payload,
+                    message: null
+                },
+                isAuthenticated: true
+            };
         case authTypes.CHECK_AUTH_REQUEST:
             return {
                 ...state,
@@ -110,7 +144,7 @@ const authReducer = (state = initialState, action) => {
                 user: null,
                 checkAuth: {
                     loading: false,
-                    error: action.payload,
+                    error: null,
                     message: null
                 },
                 isAuthenticated: false,
@@ -130,6 +164,11 @@ const authReducer = (state = initialState, action) => {
                     message: null
                 },
                 checkAuth: {
+                    loading: false,
+                    error: null,
+                    message: null
+                },
+                logout: {
                     loading: false,
                     error: null,
                     message: null

@@ -41,6 +41,27 @@ export const agentGetFailure = (error) => {
     }
 }
 
+export const agentFetchRequest = (id) => {
+    return {
+        type: agentTypes.AGENT_FETCH_REQUEST,
+        payload: id
+    }
+}
+
+export const agentFetchSuccess = (data) => {
+    return {
+        type: agentTypes.AGENT_FETCH_SUCCESS,
+        payload: data
+    }
+}
+
+export const agentFetchFailure = (error) => {
+    return {
+        type: agentTypes.AGENT_FETCH_FAILURE,
+        payload: error
+    }
+}
+
 export const clearAgentState = () => {
     return {
         type: agentTypes.CLEAR_AGENT_STATE

@@ -8,6 +8,10 @@ export const loginUser = (data) => {
     return post("/auth/login", data);
 }
 
+export const logoutUser = (data) => {
+    return post("/auth/logout");
+}
+
 export const checkAuth = () => {
     return get("/auth/checkAuth");
 }

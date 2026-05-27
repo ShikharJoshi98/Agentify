@@ -42,6 +42,26 @@ export const loginFailure = (error) => {
     }
 }
 
+export const logoutRequest = () => {
+    return {
+        type: authTypes.LOGOUT_REQUEST
+    }
+}
+
+export const logoutSuccess = (data) => {
+    return {
+        type: authTypes.LOGOUT_SUCCESS,
+        payload: data
+    }
+}
+
+export const logoutFailure = (error) => {
+    return {
+        type: authTypes.LOGOUT_FAILURE,
+        payload: error
+    }
+}
+
 export const chechAuthRequest = () => {
     return {
         type: authTypes.CHECK_AUTH_REQUEST,

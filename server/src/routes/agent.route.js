@@ -14,4 +14,14 @@ router.get("/getAll",
     agentController.getAll
 );
 
+router.get("/get/:id", 
+    authCheck,
+    agentController.get
+);
+
+router.patch("/update/:id", 
+    authCheck,
+    agentController.update
+);
+
 module.exports = router;

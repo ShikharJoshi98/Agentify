@@ -12,6 +12,11 @@ const initialState = {
         loading: false,
         error: null,
         message: null
+    },
+    agentFetch: {
+        loading: false,
+        error: null,
+        message: null
     }
 };
 
@@ -70,6 +75,35 @@ const agentReducer = (state = initialState, action) => {
                 ...state,
                 agents: [],
                 agentGet: {
+                    loading: false,
+                    error: action.payload,
+                    message: null
+                }
+            };
+        case agentTypes.AGENT_FETCH_REQUEST:
+            return {
+                ...state,
+                agentFetch: {
+                    loading: true,
+                    error: null,
+                    message: null
+                }
+            };
+        case agentTypes.AGENT_FETCH_SUCCESS:
+            return {
+                ...state,
+                agent: action.payload.data,
+                agentFetch: {
+                    loading: false,
+                    error: null,
+                    message: null
+                }
+            };
+        case agentTypes.AGENT_FETCH_FAILURE:
+            return {
+                ...state,
+                agent: null,
+                agentFetch: {
                     loading: false,
                     error: action.payload,
                     message: null

@@ -20,7 +20,30 @@ const getAll = async (req, res, next) => {
     }
 }
 
+const get = async (req, res, next) => {
+    try {
+        const agent = await agentService.getAgent(req.params.id);
+        successResponse(res, agent, "Agent fetched", STATUS_CODE.OK);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const update = async (req, res, next) => {
+    try {
+        const { name, nodes, edges, config, description } = req.body;
+        const { id } = req.params;
+
+        const updatedAgent = await agentService.updateAgent(id, { name, nodes, edges, config, description });
+        successResponse(res, updatedAgent, "Agent Updated", STATUS_CODE.OK);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     create,
-    getAll
+    getAll,
+    get,
+    update
 }

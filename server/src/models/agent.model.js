@@ -5,7 +5,19 @@ const agentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        trim: true
+    },
     config: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
+    nodes: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
+    edges: {
         type: mongoose.Schema.Types.Mixed,
         default: {}
     },

@@ -1,6 +1,6 @@
 import { all, call, put, takeLatest } from "redux-saga/effects";
-import { createAgent, getAgents } from "./agentApi";
-import { agentCreateFailure, agentCreateSuccess, agentGetFailure, agentGetSuccess } from "./agentAction";
+import { createAgent, fetchAgent, getAgents } from "./agentApi";
+import { agentCreateFailure, agentCreateSuccess, agentFetchFailure, agentFetchSuccess, agentGetFailure, agentGetSuccess } from "./agentAction";
 import agentTypes from "./agentActionType";
 
 function* agentCreateSaga(action) {
@@ -9,7 +9,7 @@ function* agentCreateSaga(action) {
             createAgent,
             action.payload
         );
-
+        
         yield put(agentCreateSuccess(response));
     } catch (error) {
         yield put(agentCreateFailure(error.message));
@@ -28,6 +28,19 @@ function* agentGetSaga() {
     }
 }
 
+function* agentFetchSaga(action) {
+    try {
+        const response = yield call(
+            fetchAgent,
+            action.payload
+        );
+
+        yield put(agentFetchSuccess(response));
+    } catch (error) {
+        yield put(agentFetchFailure(error.message));
+    }
+}
+
 function* agentSaga() {
     yield all([
 
@@ -39,6 +52,11 @@ function* agentSaga() {
         takeLatest(
             agentTypes.AGENT_GET_REQUEST,
             agentGetSaga
+        ),
+
+        takeLatest(
+            agentTypes.AGENT_FETCH_REQUEST,
+            agentFetchSaga
         )
     ])
 }
